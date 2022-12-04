@@ -1,4 +1,3 @@
-#include <iostream>
 #include <newPackage.h>
 
 
@@ -17,7 +16,7 @@ class CreatePackage : public NewPackage{
 
         void getPackageDimensions() {
             dimensions[0] = NewPackage::getPackageWidth();
-            dimensions[1] = NewPackage::getPackageLengtht(); 
+            dimensions[1] = NewPackage::getPackageLength(); 
             dimensions[2] = NewPackage::getPackageHeight();
         }
 

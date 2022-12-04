@@ -57,7 +57,7 @@ class NewPackage : public Courier{
         double getPackageLength(){
             return pkgLength;
         }
-        double getpackageHeight(){
+        double getPackageHeight(){
             return pkgHeight; 
         }
         char* getStartAddress(){

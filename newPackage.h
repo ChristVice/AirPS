@@ -1,9 +1,7 @@
-#include <Courier.h>
-
 #ifndef newPackage
 #define newPackage
 
-class NewPackage : public Courier{
+class NewPackage{
     public:
         double pkgWeight;
         double pkgWidth;
@@ -29,9 +27,9 @@ class NewPackage : public Courier{
         void estimatedTimeArrival();
         void courier();
         double getPackageWeight();
-        double geePackageWidth();
+        double getPackageWidth();
         double getPackageLength();
-        double getpackageHeight();
+        double getPackageHeight();
         char* getStartAddress();
         char* getDestinationAddress();
 };
