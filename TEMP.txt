@@ -1,0 +1,7 @@
+1$Delivered
+2$Accepted By Pilot
+3$Initiated
+4$En Route
+5$Initiated
+6$Accepted By Pilot
+7$Initiated
