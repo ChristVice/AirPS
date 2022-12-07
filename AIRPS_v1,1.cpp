@@ -8,11 +8,13 @@
 #include<string.h>
 using namespace std;
 
+//Creates New User account.
 class NewUser {
 private:
     string USERNAME;
     string PASSWORD;
         
+    // Assigns New User's Username entered by user.
     void AssignUsername() {
         string username;
         cout << "Enter Username: ";
@@ -21,6 +23,7 @@ private:
         USERNAME = username;
     }
 
+    // Assigns Password Entered by New User to the dtatabase.
     void AssignPassword() {
         string password;
         cout << "Enter Password: ";
@@ -29,9 +32,11 @@ private:
         ofstream CredentialsUpdater;
         CredentialsUpdater.open("Credentials_" + USERNAME + ".txt");
         CredentialsUpdater << PASSWORD;
+        CredentialsUpdater.close();
 
     }
 
+    //Checks to see if User List file is empty.
     bool IsFileEmpty() {
         string temp;
         ifstream USERNAME_LIST;
@@ -49,6 +54,7 @@ private:
         USERNAME_LIST.close();
     }
 
+    //Creates New Files in the Database for new user.
     void CreateFiles() {
         ofstream NewIDlist;
         ofstream NewOrderStatus;
@@ -77,6 +83,7 @@ private:
 
     }
 
+    //Updates Username List with new user.
     void UpdateUsernameDatabase() {
         ofstream USERNAME_LIST;
         USERNAME_LIST.open("UserList.txt", ios::app);
@@ -89,42 +96,50 @@ private:
     }
 
 public:
+    //Constructor exectues functions in corresponding order.
     NewUser() {
         AssignUsername();
         CreateFiles();
         AssignPassword();
         UpdateUsernameDatabase();
-        
+        cout << endl <<"New User Created";
         
     }
      
     
 };
 
+//Updates User Password with New Password.
 class UserPasswordManager {
 private:
     string USERNAME;
     string PASSWORD;
 
+    //Changes User Password with Newly Entered Password.
     void PasswordChanger() {
         cout << endl << endl;
         cout << "Enter New Password: ";
         getline(cin, PASSWORD);
 
+        //Updates Corresponding Credentials file.
         ofstream NEWPASSWORD;
         NEWPASSWORD.open("Credentials_" + USERNAME + ".txt");
         NEWPASSWORD << PASSWORD;
 
         NEWPASSWORD.close();
+
+        cout << endl << "Password Updated Succesfully." << endl;
     }
 
 public:
+    //Constructor assigns Username and calls password changer function.
     UserPasswordManager(string username) {
         USERNAME = username;
         PasswordChanger();
     }
 };
 
+//Updates All Text Files with New Order Data.
 class NewOrder {
 
 private:
@@ -151,7 +166,7 @@ public:
         USERNAME = username;
     } 
 
-    //Sets PAckage Name
+    //Sets Package Name
     void SetName(string Name) {
         Package_Name = Name;
     }
@@ -248,17 +263,24 @@ public:
  
 };
 
+//User Interface.
 class UserUI {
 
 private:
+
+    //Initiates New order
     void AddOrder() {
         
+        //Getting Package Name
         string Name;
         cout << "Enter Package Name: ";
         getline(cin, Name);
 
-        NewOrder nuggets(Name,USERNAME);
-        nuggets.generate_ID();
+        
+        NewOrder newpackage(Name,USERNAME);
+
+        //Generating ID for new order
+        newpackage.generate_ID();
 
         
         string Address = "";
@@ -278,7 +300,8 @@ private:
         cout << "ZIP: ";
         getline(cin, ZIP);
 
-        nuggets.SetOutAddress(Address, city, state, ZIP);
+        //Updates Variables With Delivery Address
+        newpackage.SetOutAddress(Address, city, state, ZIP);
 
         Address = "";
         city = "";
@@ -295,13 +318,18 @@ private:
         cout << "ZIP: ";
         getline(cin, ZIP);
 
+        //Updates Variables With Return Address
+        newpackage.SetUserAddress(Address, city, state, ZIP);
 
-        nuggets.SetUserAddress(Address, city, state, ZIP);
-
-        nuggets.UpdateFiles();
+        //Updates Files With Delivery Address Return Adress and ID
+        newpackage.UpdateFiles();
     }
     
+    //Displays Active and Completed Orders With their Status
     void ViewOrder() {
+
+        //Opening Correspont Text Files For Current User
+
         ifstream USERDATA_ID;
         ifstream USERDATA_OutAdd;
         ifstream USERDATA_RetAdd;
@@ -314,8 +342,10 @@ private:
 
         string tempstr = "";
 
+        //Getting Number of Orders.
         int LISTSIZE = list_size();
 
+        //Displays Order In Table
         cout << endl << endl << "ID\t" << "Name\t\t\t\t\t" << "Delivery Address\t\t\t\t" << "Return Address \t\t\t\t\t\t\t" << "Order Status"<<endl<<endl;
 
         for (int i = 0; i < LISTSIZE -1; i++) {
@@ -360,10 +390,15 @@ private:
 
         }
 
+        //Closing Files
         USERDATA_ID.close();
+        USERDATA_OutAdd.close();
+        USERDATA_RetAdd.close();
+        USERDATA_OS.close();
 
     }
 
+    //Gets Number of Orders for Corresponding User
     int list_size() {
         fstream IDlist;
         IDlist.open("IDlist_" + USERNAME+ ".txt");
@@ -386,16 +421,19 @@ private:
     string USERNAME;
 
 public:
+    //Constructor Inputs Username
     UserUI(string username){
         USERNAME = username;
     }
 
+    //User Menu
     void Menu() {
         bool controller = 1;
         string UserAnswer = "n";
         string MenuNumber = "0";
         do {
 
+            //Displays Menu Options
             cout << endl << endl;
             cout << "What would you like to do:" << endl;
             cout << " 1 - Add Order"<<endl;
@@ -406,6 +444,7 @@ public:
             cout << endl <<"Enter Number: ";
             getline(cin, MenuNumber);
 
+            //Calls on Proper Punction Based on User Selection
             if (MenuNumber == "1") {
                 AddOrder();
             }
@@ -436,12 +475,14 @@ public:
     
 };
 
+//Pilot Interface
 class PilotUI {
 private:
     string USERNAME;
 
-    int AmountOfUsers;
+    int AmountOfUsers; //Sores amount User Accounts
     
+    //Checks if Files is Empty
     bool isFileEmpty(string fileName) {
         ifstream file(fileName);
         file.seekg(0, ios::end); // points to the end of file
@@ -456,6 +497,7 @@ private:
     
     }
 
+    //Displays Package Options to pick from
     void DisplayOptions() {
         ifstream USERDATA_ID;
         ifstream USERDATA_OutAdd;
@@ -471,13 +513,14 @@ private:
        
         for (int i = 0; !USERNAMELIST.eof(); i++) {
 
+            //Opens User Files And Extracts Order Lists
             getline(USERNAMELIST, customerUsername);
 
             USERDATA_ID.open("IDlist_" + customerUsername + ".txt");
             USERDATA_OutAdd.open("Outgoing Address_" + customerUsername + ".txt");
 
 
-
+            //Displays Options From Files
             if (!isFileEmpty("IDlist_" + customerUsername + ".txt")) {
 
                 for (int j = 0; !USERDATA_ID.eof(); j++) {
@@ -487,12 +530,14 @@ private:
                     getline(USERDATA_ID, tempstr, '$');
 
                     if (tempstr != "") {
+                        //Displayinf Option ID
                         cout << i + 1 << " - " << j + 1 << "\t";
                         getline(USERDATA_ID, tempstr);
 
-
+                        //Displayinf Option Name
                         cout << tempstr << "\t\t";
 
+                        //Displayinf Option Delivery Address
                         getline(USERDATA_OutAdd, tempstr, '$');
                         cout << tempstr << ", ";
                         getline(USERDATA_OutAdd, tempstr, '$');
@@ -514,6 +559,7 @@ private:
 
     }
 
+    //Allows Pilot to Make Selection and Updates Corresponding Files.
     void PickPackage() {
         ofstream PICKEDPACKAGE;
         ifstream UserPackageList;
@@ -641,6 +687,7 @@ private:
         TEMP.close();
     }
 
+    //Displays Picked Packages.
     void DislayOrders() {
         ifstream PILOTORDERS;
         PILOTORDERS.open("PickedPackages_"+ USERNAME +".txt");
@@ -679,6 +726,7 @@ public:
 
     }
 
+    //Generates Menu and Selection
     void Menu() {
         bool controller = 1;
         string UserAnswer = "n";
@@ -721,6 +769,7 @@ public:
 
 };
 
+//Authenticates User Login
 class UserLogin {
 private:
     string USERNAME;
@@ -789,11 +838,13 @@ public:
     }
 };
 
+//Authenticates Pilot Login
 class PilotLogin {
 private:
     string USERNAME;
     string PASSWORD;
 
+    //Checks If Username is Valid
     bool isUsernameValid(string username) {
 
         string temp;
@@ -816,6 +867,8 @@ private:
 
 
 public:
+
+    //Constructor Asks for Username Input and Extracts Corresponding Password
     PilotLogin() {
 
         string temp = "";
@@ -846,6 +899,8 @@ public:
 
 
     }
+
+    //Asks User For Pilot's Password and Checks if correct
     bool passwordValidifier() {
         string UserInput;
         cout << "Password: ";
@@ -858,16 +913,20 @@ public:
             return 0;
         }
     }
+
+    //Returns Pilot's Username
     string GetUsername() {
         return USERNAME;
     }
 };
 
+//Authenticates Employee Login
 class EmployeeLogin {
 private:
     string USERNAME;
     string PASSWORD;
 
+    //Checks If Username is Valid
     bool isUsernameValid(string username) {
 
         string temp;
@@ -889,6 +948,8 @@ private:
     }
 
 public:
+
+    //Constructor Asks for Username Input and Extracts Corresponding Password
     EmployeeLogin() {
         string temp = "";
 
@@ -915,6 +976,8 @@ public:
         passwordExtractor.close();
 
     }
+
+    //Asks User For Employee's Password and Checks if correct
     bool passwordValidifier() {
         string UserInput;
         cout << "Password: ";
@@ -928,6 +991,7 @@ public:
         }
     }
 
+    //Returns Employee's Username
     string GetUsername() {
         return USERNAME;
     
@@ -935,11 +999,13 @@ public:
 
 };
 
+//Employee Interface
 class EmployeeUI {
 private:
     string USERNAME;
     int AmountOfUsers;
 
+    //Checks if Files is Empty
     bool isFileEmpty(string fileName) {
         ifstream file(fileName);
         file.seekg(0, ios::end); // points to the end of file
@@ -954,6 +1020,7 @@ private:
 
     }
 
+    //Displays Package Options to pick from.
     void DisplayOptions() {
         ifstream USERDATA_ID;
         ifstream USERDATA_OutAdd;
@@ -1022,6 +1089,7 @@ private:
 
     }
 
+    //Allows Employee to Make Selection, change status and Updates Corresponding Files.
     void EditMenu() {
 
         ifstream USERLIST;        
@@ -1132,6 +1200,7 @@ public:
 
     }
 
+    //Employee Interface Menu.
     void Menu() {
         bool controller = 1;
         string UserAnswer = "n";
@@ -1169,6 +1238,7 @@ public:
     }
 };
 
+//Master Interface: Authenticates logins and opens corresponding Interface
 class MasterUI {
 private:
 
